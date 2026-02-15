@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import { useScans } from '../hooks';
 import { DailyScanCount } from '../types';
+import { ErrorAlert } from './ErrorAlert';
 
 const MONTH_NAMES = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -77,7 +78,7 @@ interface HeatmapProps {
 }
 
 export const Heatmap = ({ year, selectedProviderIds }: HeatmapProps) => {
-  const data = useScans(year, selectedProviderIds);
+  const { data, error, retry } = useScans(year, selectedProviderIds);
   const grid = useMemo(() => buildDateGrid(year), [year]);
   const scanMap = useMemo(
     () => (data ? buildScanMap(data) : new Map<string, number>()),
@@ -87,6 +88,10 @@ export const Heatmap = ({ year, selectedProviderIds }: HeatmapProps) => {
     () => (data ? Math.max(0, ...data.map((d) => d.count)) : 0),
     [data]
   );
+
+  if (error) {
+    return <ErrorAlert message={error} onRetry={retry} />;
+  }
 
   if (!data) {
     return (

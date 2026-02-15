@@ -25,10 +25,13 @@ export class ScanService {
       },
     });
 
-    // Aggregate scan counts by day
+    // Aggregate scan counts by day 
     const countsMap: Record<string, number> = {};
     for (const scan of scans) {
-      const key = scan.date.toISOString().split('T')[0]; // "YYYY-MM-DD"
+      const y = scan.date.getFullYear();
+      const m = String(scan.date.getMonth() + 1).padStart(2, '0');
+      const d = String(scan.date.getDate()).padStart(2, '0');
+      const key = `${y}-${m}-${d}`;
       countsMap[key] = (countsMap[key] || 0) + 1;
     }
 

@@ -3,10 +3,15 @@ import './styles.css';
 import { Heatmap } from './components/Heatmap';
 import { YearPicker } from './components/YearPicker';
 import { CloudPrivderSelect } from './components/CloudPrivderSelect';
+import { ErrorAlert } from './components/ErrorAlert';
 import { useCloudProviders } from './hooks';
 
 export default function App() {
-  const cloudProviders = useCloudProviders();
+  const {
+    data: cloudProviders,
+    error: providersError,
+    retry: retryProviders,
+  } = useCloudProviders();
   const [year, setYear] = useState(new Date().getFullYear());
   const [selectedProviderIds, setSelectedProviderIds] = useState<string[]>([]);
 
@@ -19,6 +24,9 @@ export default function App() {
 
   return (
     <div className="app">
+      {providersError && (
+        <ErrorAlert message={providersError} onRetry={retryProviders} />
+      )}
       <div className="filters">
         <YearPicker
           disableFuture

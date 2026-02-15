@@ -1,33 +1,49 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import instance from '../api/http-client';
 import { DailyScanCount } from '../types';
+
+interface UseScansResult {
+  data: DailyScanCount[] | undefined;
+  error: string | null;
+  retry: () => void;
+}
 
 export function useScans(
   year: number,
   cloudProviderIds: string[]
-): DailyScanCount[] | undefined {
-  const [scans, setScans] = useState<DailyScanCount[]>();
+): UseScansResult {
+  const [data, setData] = useState<DailyScanCount[]>();
+  const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const retry = useCallback(() => setRetryCount((c) => c + 1), []);
 
   useEffect(() => {
     if (cloudProviderIds.length === 0) {
-      setScans([]);
+      setData([]);
+      setError(null);
       return;
     }
 
-    setScans(undefined);
+    setData(undefined);
+    setError(null);
 
     const fetchScans = async () => {
-      const params = new URLSearchParams({ year: String(year) });
-      params.set('cloudProviders', cloudProviderIds.join(','));
+      try {
+        const params = new URLSearchParams({ year: String(year) });
+        params.set('cloudProviders', cloudProviderIds.join(','));
 
-      const response = await instance.get<DailyScanCount[]>(
-        `/api/scans?${params.toString()}`
-      );
-      setScans(response.data);
+        const response = await instance.get<DailyScanCount[]>(
+          `/api/scans?${params.toString()}`
+        );
+        setData(response.data);
+      } catch {
+        setError('Failed to load scans. Please try again.');
+      }
     };
 
     fetchScans();
-  }, [year, cloudProviderIds]);
+  }, [year, cloudProviderIds, retryCount]);
 
-  return scans;
+  return { data, error, retry };
 }
