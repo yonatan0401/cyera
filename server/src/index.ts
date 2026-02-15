@@ -1,5 +1,6 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import morgan from 'morgan';
 import apiRouter from './api';
 
 const app: Express = express();
@@ -7,6 +8,7 @@ const port = 3001;
 
 app.use(cors());
 app.use(express.json());
+app.use(morgan('dev'));
 
 app.get('/', (_req: Request, res: Response) => {
   res.send('Server is running');
