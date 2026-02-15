@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import instance from '../http-client';
+import instance from '../api/http-client';
 import { CloudProvider } from '../types';
 
 export function useCloudProviders(): CloudProvider[] | undefined {

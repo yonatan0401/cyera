@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import instance from '../http-client';
+import instance from '../api/http-client';
 import { DailyScanCount } from '../types';
 
 export function useScans(
