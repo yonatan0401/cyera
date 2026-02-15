@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import instance from './http-client';
+import { CloudProvider } from './types';
 
-export function useCloudProviders(): string[] | undefined {
-  const [cloudProviders, setCloudProviders] = useState<string[]>();
+export function useCloudProviders(): CloudProvider[] | undefined {
+  const [cloudProviders, setCloudProviders] = useState<CloudProvider[]>();
 
   if (cloudProviders === undefined) {
     void loadCloudProviders(setCloudProviders);
@@ -12,8 +13,8 @@ export function useCloudProviders(): string[] | undefined {
 }
 
 async function loadCloudProviders(
-  onResponse: (result: string[]) => void
+  onResponse: (result: CloudProvider[]) => void
 ): Promise<void> {
-  const response = await instance.get('/api/cloud-providers/');
+  const response = await instance.get<CloudProvider[]>('/api/cloud-providers/');
   onResponse(response.data);
 }

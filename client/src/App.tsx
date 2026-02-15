@@ -23,7 +23,7 @@ export default function App() {
       </div>
       <Heatmap />
       {/* e2e example: */}
-      <div>Cloud Providers: {cloudProviders?.join(', ')}</div>
+      <div>Cloud Providers: {cloudProviders?.map((cp) => cp.name).join(', ')}</div>
     </div>
   );
 }
